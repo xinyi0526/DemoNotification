@@ -8,6 +8,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnNotify1 = findViewById(R.id.btnNotify1);
+        btnNotify2 = findViewById(R.id.btnNotify2);
 
         btnNotify1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +50,43 @@ public class MainActivity extends AppCompatActivity {
                 builder.setContentText("Subject");
                 builder.setSmallIcon(android.R.drawable.btn_star_big_off);
                 builder.setContentIntent(pendingIntent);
+                builder.setAutoCancel(true);
+
+
+                Notification n = builder.build();
+
+                notificationManager.notify(notificationID,n);
+                finish();
+            }
+        });
+
+        btnNotify2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NotificationManager notificationManager = (NotificationManager)  getSystemService(NOTIFICATION_SERVICE);
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                    NotificationChannel channel = new NotificationChannel("default","Default Channel",NotificationManager.IMPORTANCE_DEFAULT);
+
+                    channel.setDescription("This is for dafault notification");
+                    notificationManager.createNotificationChannel(channel);
+                }
+
+                Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this,requestCode,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+
+                NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+                bigText.setBigContentTitle("Big Text - Long Content");
+                bigText.bigText("This is one Big Text" + "- A quick brown fox jumps over a lazy brown dog" + "\nLoreum ipsum dolor sit amet, sea eu quod des");
+                bigText.setSummaryText("Reflection Journal?");
+
+                //Build Notification
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,"default");
+                builder.setContentTitle("Amazing Offer!");
+                builder.setContentText("Subject");
+                builder.setSmallIcon(android.R.drawable.btn_star_big_off);
+                builder.setContentIntent(pendingIntent);
+                builder.setStyle(bigText);
                 builder.setAutoCancel(true);
 
                 Notification n = builder.build();
